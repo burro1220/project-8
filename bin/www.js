@@ -10,7 +10,7 @@ var http = require('http');
 var models = require('../models');
 
 //Not sure about this line
-const sequelize = require('../models');
+const sequelize = require('../models').sequelize;
 
 /**
  * Get port from environment and store in Express.
