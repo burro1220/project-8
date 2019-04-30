@@ -14,10 +14,11 @@ router.get('/', function(req, res, next) {
 /* POST create book. */
 router.post('/', function(req, res, next) {
   Book.create(req.body).then(function(book) {
-    res.redirect("/books/" + book.id);
+    console.log(book);
+    res.redirect("/books/");
   }).catch(function(error){
       if(error.name === "SequelizeValidationError") {
-        res.render("books/new", {book: Book.build(req.body), errors: error.errors, title: "New Book"})
+        res.render("books/new-book", {book: Book.build(req.body), errors: error.errors, title: "New Book"})
       } else {
         throw error;
       }
@@ -38,7 +39,8 @@ router.get("/:id", function(req, res, next){
     if(book) {
         res.render("books/update-book", {book: book, title: book.title});  
     } else {
-        res.send(404);
+        console.log("here");
+        res.render("books/page-not-found");
     }
     }).catch(function(error){
         res.send(500, error);
@@ -54,7 +56,7 @@ router.put("/:id", function(req, res, next){
       res.send(404);
     }
   }).then(function(book){
-    res.redirect("/books/" + book.id);        
+    res.redirect("/books/");        
   }).catch(function(error){
       if(error.name === "SequelizeValidationError") {
         const book = Book.build(req.body);
