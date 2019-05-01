@@ -46,6 +46,46 @@ router.get("/:id", function(req, res, next){
     });
   });
 
+  /* GET Search for Book */
+  router.get("/search", (req, res) => {
+    const { search } = req.query;
+    console.log(search);
+    Book.findAll({
+      where: {
+        $or: [
+          {
+            title: {
+              $iLike: `%${search}%`
+            }
+          },
+          {
+            author: {
+              $iLike: `%${search}%`
+            }
+          },
+          {
+            genre: {
+              $iLike: `%${search}%`
+            }
+          },
+          {
+            year: {
+              $iLike: `%${search}%`
+            }
+          }
+        ]
+      }
+    }).then(books => {
+      if(books.length > 0) {
+        res.render('index', {books, title: "Search Results"});
+      } else {
+        res.render('page-not-found', { title: "Page Not Found" } );
+      }
+    }).catch(error => {
+      res.send(500, error);
+    });
+  });
+
   /* PUT update book. */
 router.put("/:id", function(req, res, next){
   Book.findByPk(req.params.id).then(function(book){
