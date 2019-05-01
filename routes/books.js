@@ -39,47 +39,23 @@ router.get("/:id", function(req, res, next){
     if(book) {
         res.render("books/update-book", {book: book, title: book.title});  
     } else {
-        res.render("page-not-found");
+        res.render("page-not-found", { book: {}, title: "Page Not Found" });
     }
     }).catch(function(error){
         res.send(500, error);
     });
   });
 
-  /* GET Search for Book */
-  router.get("/search", (req, res) => {
-    const { search } = req.query;
+ /* GET Search for Book */
+ router.get("/search", (req, res) => {
+    const search = req.query;
     console.log(search);
-    Book.findAll({
-      where: {
-        $or: [
-          {
-            title: {
-              $iLike: `%${search}%`
-            }
-          },
-          {
-            author: {
-              $iLike: `%${search}%`
-            }
-          },
-          {
-            genre: {
-              $iLike: `%${search}%`
-            }
-          },
-          {
-            year: {
-              $iLike: `%${search}%`
-            }
-          }
-        ]
-      }
-    }).then(books => {
+    Book.findAll({order: [["createdAt", "DESC"]]}).then(books => {
+      console.log(books);
       if(books.length > 0) {
         res.render('index', {books, title: "Search Results"});
       } else {
-        res.render('page-not-found', { title: "Page Not Found" } );
+        res.render('page-not-found', { book: {}, title: "Page Not Found" } );
       }
     }).catch(error => {
       res.send(500, error);
