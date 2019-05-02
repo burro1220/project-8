@@ -14,8 +14,7 @@ router.get('/', function(req, res, next) {
 /* POST create book. */
 router.post('/', function(req, res, next) {
   Book.create(req.body).then(function(book) {
-    console.log(book);
-    res.redirect("/books/");
+     res.redirect("/books/");
   }).catch(function(error){
       if(error.name === "SequelizeValidationError") {
         res.render("books/new-book", {book: Book.build(req.body), errors: error.errors, title: "New Book"})
@@ -32,7 +31,27 @@ router.get('/new', function(req, res, next) {
   res.render("books/new-book", {book: {}, title: "New Book"});
 });
 
-  
+/* GET Search for Book */
+ router.get("/search", (req, res) => {
+  const { search } = req.query;
+  console.log(search);
+  Book.findAll({
+    title:{
+      $iLike: `%${search}%`
+    }   
+  }).then(books => {
+    console.log(books);
+    if(books.length > 0) {
+      res.render('books/index', {books: books, title: "Search Results"});
+    } else {
+      res.render('page-not-found', { book: {}, title: "Page Not Found" } );
+    }
+  }).catch(error => {
+    res.status(500).send(error);
+  });
+});
+
+
 /* GET individual book. */
 router.get("/:id", function(req, res, next){
     Book.findByPk(req.params.id).then(function(book){
@@ -46,21 +65,6 @@ router.get("/:id", function(req, res, next){
     });
   });
 
- /* GET Search for Book */
- router.get("/search", (req, res) => {
-    const search = req.query;
-    console.log(search);
-    Book.findAll({order: [["createdAt", "DESC"]]}).then(books => {
-      console.log(books);
-      if(books.length > 0) {
-        res.render('index', {books, title: "Search Results"});
-      } else {
-        res.render('page-not-found', { book: {}, title: "Page Not Found" } );
-      }
-    }).catch(error => {
-      res.send(500, error);
-    });
-  });
 
   /* PUT update book. */
 router.put("/:id", function(req, res, next){
