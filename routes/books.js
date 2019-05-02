@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Book = require("../models").Book;
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 /* GET books listing. */
 router.get('/', function(req, res, next) {
@@ -32,13 +34,33 @@ router.get('/new', function(req, res, next) {
 });
 
 /* GET Search for Book */
- router.get("/search", (req, res) => {
+router.get("/search", (req, res) => {
   const { search } = req.query;
-  console.log(search);
   Book.findAll({
-    title:{
-      $iLike: `%${search}%`
-    }   
+    where: {
+      [Op.or]: [
+        {
+          title: {
+            [Op.like]: `%${search}%`
+          }
+        },
+        {
+          author: {
+            [Op.like]: `%${search}%`
+          }
+        },
+        {
+          genre: {
+            [Op.like]: `%${search}%`
+          }
+        },
+        {
+          year: {
+            [Op.like]: `%${search}%`
+          }
+        }
+      ]
+    }
   }).then(books => {
     console.log(books);
     if(books.length > 0) {
