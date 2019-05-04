@@ -95,3 +95,22 @@ input[type=text] {
 .error {
   color: rgb(236, 15, 15);
 }
+
+/*  MY CHANGES */
+table {
+  margin-bottom: 20px;
+}
+.paginationDiv {
+  margin-left: 25px
+}
+
+.paginationDiv li {
+  display: inline;
+  margin-left: 10px;
+  border-right: 1px solid;
+  padding-right: 10px;
+}
+
+.paginationDiv li a {
+  cursor: pointer;
+}
